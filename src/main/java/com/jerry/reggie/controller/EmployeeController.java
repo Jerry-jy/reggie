@@ -2,10 +2,12 @@ package com.jerry.reggie.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jerry.reggie.common.R;
 import com.jerry.reggie.entity.Employee;
 import com.jerry.reggie.service.EmployeeService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Controller;
@@ -34,6 +36,7 @@ public class EmployeeController {
 
     /**
      * 员工后台登录功能
+     *
      * @param employee
      * @param request
      * @return
@@ -80,6 +83,7 @@ public class EmployeeController {
 
     /**
      * 员工后台登出功能
+     *
      * @param request
      * @return
      */
@@ -93,12 +97,13 @@ public class EmployeeController {
 
     /**
      * 新增员工
+     *
      * @param employee
      * @return
      */
     @PostMapping
-    public R<String> save(@RequestBody Employee employee, HttpServletRequest request){
-        log.info("新增员工，员工信息：{}",employee.toString());
+    public R<String> save(@RequestBody Employee employee, HttpServletRequest request) {
+        log.info("新增员工，员工信息：{}", employee.toString());
 
         //设置员工的初始密码，需要进行MD5 加密处理
         employee.setPassword(DigestUtils.md5DigestAsHex("123456".getBytes()));
@@ -114,5 +119,33 @@ public class EmployeeController {
 
         employeeService.save(employee);
         return R.success("添加员工成功");
+    }
+
+    /**
+     * 员工信息分页查询
+     *
+     * @param page
+     * @param pageSize
+     * @param name
+     * @return
+     */
+    @GetMapping("/page")
+    public R<Page> page(int page, int pageSize, String name) {
+        log.info("page = {}, pageSize = {}, name = {}", page, pageSize, name);
+
+        //这里：只需要new page对象和构造好lambdaQueryWrapper
+        //构造分页构造器
+        Page<Employee> pageInfo = new Page<>(page, pageSize);
+
+        //构造条件构造器
+        LambdaQueryWrapper<Employee> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        //添加一个过滤条件
+        lambdaQueryWrapper.like(StringUtils.isNotEmpty(name), Employee::getName, name);
+        //添加一个排序条件
+        lambdaQueryWrapper.orderByDesc(Employee::getUpdateTime);
+        //执行查询
+        employeeService.page(pageInfo, lambdaQueryWrapper);
+
+        return R.success(pageInfo);
     }
 }
