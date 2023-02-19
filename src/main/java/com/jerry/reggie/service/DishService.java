@@ -1,18 +1,16 @@
 package com.jerry.reggie.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.jerry.reggie.entity.Category;
+import com.jerry.reggie.entity.Dish;
 
 /**
- * ClassName: CategoryService
+ * ClassName: DishService
  * Package: com.jerry.reggie.service
  * Description:
  *
  * @Author jerry_jy
- * @Create 2023-02-19 9:29
+ * @Create 2023-02-19 10:52
  * @Version 1.0
  */
-public interface CategoryService extends IService<Category> {
-
-    public void remove(Long id);
+public interface DishService extends IService<Dish> {
 }
