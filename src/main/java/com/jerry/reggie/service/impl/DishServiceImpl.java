@@ -32,6 +32,9 @@ import java.util.stream.Collectors;
 @Slf4j
 public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements DishService {
     @Autowired
+    private DishMapper dishMapper;
+
+    @Autowired
     private DishFlavorService dishFlavorService;
 
     /**
@@ -122,17 +125,13 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
         this.updateById(dish);
     }
 
+    /**
+     * (批量)删除菜品
+     *
+     * @param id
+     */
     @Override
-    public void setStatusList(List<Dish> dishList) {
-        dishList = dishList.stream().map((item) -> {
-            if (item.getStatus() == 1) {
-                item.setStatus(0);
-            } else {
-                item.setStatus(1);
-            }
-            return item;
-        }).collect(Collectors.toList());
-
-        this.updateBatchById(dishList);
+    public void delete(Long id) {
+        dishMapper.deleteById(id);
     }
 }

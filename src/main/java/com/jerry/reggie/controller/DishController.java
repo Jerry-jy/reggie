@@ -125,77 +125,40 @@ public class DishController {
 
 
     /**
-     * 修改菜品的停售状态
+     * 修改菜品的 停/启 售状态
      *
      * @param ids
      * @return
      */
-    @PostMapping("/status/0")
-    public R<Dish> status0(long ids) {
+    @PostMapping("/status/{status}")
+    public R<Dish> status(long ids) {
         Dish dish = dishService.getById(ids);
         dishService.setStatus(dish);
         return R.success(dish);
     }
-
-    /**
-     * 修改菜品的启售状态
-     *
-     * @param ids
-     * @return
-     */
-    @PostMapping("/status/1")
-    public R<Dish> status1(long ids) {
-        Dish dish = dishService.getById(ids);
-        dishService.setStatus(dish);
-        return R.success(dish);
-    }
-
-    /**
-     * 修改菜品的停售状态
-     * @param ids
-     * @return
-     */
-    @PostMapping("/status/0/{ids}")
-    public R<List> statusList0(List<Long> ids) {
-        List<Dish> dishList = dishService.listByIds(ids);
-        dishService.setStatusList(dishList);
-        return R.success(dishList);
-    }
+//    public R<Dish> status(long[] ids) {
+//        Dish dish = dishService.getById(ids);
+//        dishService.setStatus(dish);
+//        LambdaQueryWrapper<Dish> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+//        for (long id : ids) {
+//            lambdaQueryWrapper.eq(Dish::getId, id);
+//            dishService.update(dish, lambdaQueryWrapper);
+//        }
+//
+//        return R.success(dish);
+//    }
 
 
     /**
-     * 批量修改菜品的启售状态
-     * @param ids
-     * @return
-     */
-    @PostMapping("/status/1/{ids}")
-    public R<List> statusList1(List<Long> ids) {
-        List<Dish> dishList = dishService.listByIds(ids);
-        dishService.setStatusList(dishList);
-        return R.success(dishList);
-    }
-
-
-    /**
-     * 菜品管理--删除菜品
+     * 菜品管理--批量删除菜品--跟单个删除一样的，复用同一份代码
      * @param ids
      * @return
      */
     @DeleteMapping
-    public R<String> delete(long ids) {
-        dishService.removeById(ids);
-        return R.success("删除成功");
-    }
-
-
-    /**
-     * 菜品管理--批量删除菜品
-     * @param ids
-     * @return
-     */
-    @DeleteMapping("/{ids}")
-    public R<String> deleteBatch(List<Long> ids) {
-        dishService.removeByIds(ids);
-        return R.success("批量删除成功");
+    public R<String> delete(Long[] ids){
+        for (Long id : ids) {
+            dishService.delete(id);
+        }
+        return R.success("删除菜品成功！");
     }
 }
