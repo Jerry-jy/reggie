@@ -23,4 +23,8 @@ public interface DishService extends IService<Dish> {
 
     //更新菜品信息，同时更新对应的口味信息
     public void updateWithFlavor(DishDto dishDto);
+
+    //修改菜品的停/启售状态
+    public void setStatus(Dish dish);
+
 }

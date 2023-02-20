@@ -1,6 +1,7 @@
 package com.jerry.reggie.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.jerry.reggie.dto.DishDto;
 import com.jerry.reggie.entity.Dish;
@@ -104,5 +105,19 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
         }).collect(Collectors.toList());
 
         dishFlavorService.saveBatch(flavors);
+    }
+
+    /**
+     * 修改菜品的停/启售状态
+     * @param dish
+     */
+    @Override
+    public void setStatus(Dish dish) {
+        if (dish.getStatus()==1){
+            dish.setStatus(0);
+        }else {
+            dish.setStatus(1);
+        }
+        this.updateById(dish);
     }
 }

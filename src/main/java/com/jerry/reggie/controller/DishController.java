@@ -122,4 +122,40 @@ public class DishController {
         dishService.updateWithFlavor(dishDto);
         return R.success("保存菜品成功");
     }
+
+
+    /**
+     * 修改菜品的停售状态
+     * @param ids
+     * @return
+     */
+    @PostMapping("/status/0")
+    public R<Dish> status0(long ids){
+        Dish dish = dishService.getById(ids);
+        dishService.setStatus(dish);
+        return R.success(dish);
+    }
+
+    /**
+     * 修改菜品的启售状态
+     * @param ids
+     * @return
+     */
+    @PostMapping("/status/1")
+    public R<Dish> status1(long ids){
+        Dish dish = dishService.getById(ids);
+        dishService.setStatus(dish);
+        return R.success(dish);
+    }
+
+    /**
+     * 菜品管理--删除菜品
+     * @param ids
+     * @return
+     */
+    @DeleteMapping
+    public R<String> delete(long ids){
+        dishService.removeById(ids);
+        return R.success("删除成功");
+    }
 }
