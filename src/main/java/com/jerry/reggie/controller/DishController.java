@@ -76,9 +76,9 @@ public class DishController {
         dishService.page(pageInfo, lambdaQueryWrapper);
 
         //对象拷贝
-        BeanUtils.copyProperties(pageInfo, dishDtoPage,"records");
+        BeanUtils.copyProperties(pageInfo, dishDtoPage, "records");
         List<Dish> records = pageInfo.getRecords();
-        List<DishDto> list =  records.stream().map((item) -> {
+        List<DishDto> list = records.stream().map((item) -> {
             DishDto dishDto = new DishDto();
 
             //对象拷贝
@@ -87,7 +87,7 @@ public class DishController {
             Long categoryId = item.getCategoryId();//分类id
             Category category = categoryService.getById(categoryId);//分类对象
 
-            if (category!=null){
+            if (category != null) {
                 String categoryName = category.getName();
                 dishDto.setCategoryName(categoryName);
             }
@@ -101,22 +101,22 @@ public class DishController {
 
     /**
      * 根据id查询菜品信息和对应的口味信息
+     *
      * @param id
      * @return
      */
     @GetMapping("/{id}")
-    public R<DishDto> getMealById(@PathVariable Long id){
+    public R<DishDto> getMealById(@PathVariable Long id) {
         DishDto dishDto = dishService.getByIdWithFlavor(id);
         return R.success(dishDto);
     }
 
     /**
-     *
      * @param dishDto
      * @return
      */
     @PutMapping
-    public R<String> updateMeal(@RequestBody DishDto dishDto){
+    public R<String> updateMeal(@RequestBody DishDto dishDto) {
         log.info(dishDto.toString());
 
         dishService.updateWithFlavor(dishDto);
@@ -126,11 +126,12 @@ public class DishController {
 
     /**
      * 修改菜品的停售状态
+     *
      * @param ids
      * @return
      */
     @PostMapping("/status/0")
-    public R<Dish> status0(long ids){
+    public R<Dish> status0(long ids) {
         Dish dish = dishService.getById(ids);
         dishService.setStatus(dish);
         return R.success(dish);
@@ -138,15 +139,42 @@ public class DishController {
 
     /**
      * 修改菜品的启售状态
+     *
      * @param ids
      * @return
      */
     @PostMapping("/status/1")
-    public R<Dish> status1(long ids){
+    public R<Dish> status1(long ids) {
         Dish dish = dishService.getById(ids);
         dishService.setStatus(dish);
         return R.success(dish);
     }
+
+    /**
+     * 修改菜品的停售状态
+     * @param ids
+     * @return
+     */
+    @PostMapping("/status/0/{ids}")
+    public R<List> statusList0(List<Long> ids) {
+        List<Dish> dishList = dishService.listByIds(ids);
+        dishService.setStatusList(dishList);
+        return R.success(dishList);
+    }
+
+
+    /**
+     * 批量修改菜品的启售状态
+     * @param ids
+     * @return
+     */
+    @PostMapping("/status/1/{ids}")
+    public R<List> statusList1(List<Long> ids) {
+        List<Dish> dishList = dishService.listByIds(ids);
+        dishService.setStatusList(dishList);
+        return R.success(dishList);
+    }
+
 
     /**
      * 菜品管理--删除菜品
@@ -154,8 +182,20 @@ public class DishController {
      * @return
      */
     @DeleteMapping
-    public R<String> delete(long ids){
+    public R<String> delete(long ids) {
         dishService.removeById(ids);
         return R.success("删除成功");
+    }
+
+
+    /**
+     * 菜品管理--批量删除菜品
+     * @param ids
+     * @return
+     */
+    @DeleteMapping("/{ids}")
+    public R<String> deleteBatch(List<Long> ids) {
+        dishService.removeByIds(ids);
+        return R.success("批量删除成功");
     }
 }

@@ -109,15 +109,30 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
 
     /**
      * 修改菜品的停/启售状态
+     *
      * @param dish
      */
     @Override
     public void setStatus(Dish dish) {
-        if (dish.getStatus()==1){
+        if (dish.getStatus() == 1) {
             dish.setStatus(0);
-        }else {
+        } else {
             dish.setStatus(1);
         }
         this.updateById(dish);
+    }
+
+    @Override
+    public void setStatusList(List<Dish> dishList) {
+        dishList = dishList.stream().map((item) -> {
+            if (item.getStatus() == 1) {
+                item.setStatus(0);
+            } else {
+                item.setStatus(1);
+            }
+            return item;
+        }).collect(Collectors.toList());
+
+        this.updateBatchById(dishList);
     }
 }

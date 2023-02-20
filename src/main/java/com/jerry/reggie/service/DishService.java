@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.jerry.reggie.dto.DishDto;
 import com.jerry.reggie.entity.Dish;
 
+import java.util.List;
+
 /**
  * ClassName: DishService
  * Package: com.jerry.reggie.service
@@ -27,4 +29,6 @@ public interface DishService extends IService<Dish> {
     //修改菜品的停/启售状态
     public void setStatus(Dish dish);
 
+    //批量修改菜品的启售状态
+    public void setStatusList(List<Dish> dishList);
 }
