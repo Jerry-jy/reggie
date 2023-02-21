@@ -3,6 +3,7 @@ package com.jerry.reggie.controller;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jerry.reggie.common.R;
+import com.jerry.reggie.dto.DishDto;
 import com.jerry.reggie.dto.SetmealDto;
 import com.jerry.reggie.entity.Category;
 import com.jerry.reggie.entity.Setmeal;
@@ -57,6 +58,14 @@ public class SetmealDishController {
         return R.success("新增套餐成功");
     }
 
+
+    /**
+     * 套餐管理--套餐信息分页查询
+     * @param page
+     * @param pageSize
+     * @param name
+     * @return
+     */
     @GetMapping("/page")
     public R<Page> page(int page, int pageSize, String name) {
         //分页构造器
@@ -99,4 +108,27 @@ public class SetmealDishController {
         return R.success(dtoPage);
     }
 
+    /**
+     * 根据id查询套餐信息和对应的套餐内容---回显套餐信息
+     * @param id
+     * @return
+     */
+    @GetMapping("/{id}")
+    public R<SetmealDto> getMealDtoById(@PathVariable long id){
+        SetmealDto setmealDto = setmealService.getByIdWithSetmeal(id);
+        return R.success(setmealDto);
+    }
+
+    /**
+     * 修改套餐信息，并保存
+     * @param setmealDto
+     * @return
+     */
+    @PutMapping
+    public R<String> updateSetmeal(@RequestBody SetmealDto setmealDto) {
+        log.info(setmealDto.toString());
+
+        setmealService.updateWithSetmeal(setmealDto);
+        return R.success("保存菜品成功");
+    }
 }

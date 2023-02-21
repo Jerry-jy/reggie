@@ -19,4 +19,10 @@ public interface SetmealService extends IService<Setmeal> {
      * @param setmealDto
      */
     void saveWithDish(SetmealDto setmealDto);
+
+    //根据id查询套餐信息和对应的套餐内容---回显套餐信息
+    SetmealDto getByIdWithSetmeal(long id);
+
+    //修改套餐信息，并保存
+    void updateWithSetmeal(SetmealDto setmealDto);
 }
