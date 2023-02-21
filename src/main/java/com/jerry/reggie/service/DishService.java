@@ -33,4 +33,7 @@ public interface DishService extends IService<Dish> {
 
     //删除菜品
     void delete(Long id);
+
+    // 重写--(批量)删除菜品
+    void removeWithFlavor(List<Long> ids);
 }

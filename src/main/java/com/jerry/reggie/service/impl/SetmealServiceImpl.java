@@ -2,6 +2,7 @@ package com.jerry.reggie.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.jerry.reggie.common.CustomException;
 import com.jerry.reggie.dto.SetmealDto;
 import com.jerry.reggie.entity.Setmeal;
 import com.jerry.reggie.entity.SetmealDish;
@@ -31,6 +32,9 @@ import java.util.stream.Collectors;
 public class SetmealServiceImpl extends ServiceImpl<SetmealMapper, Setmeal> implements SetmealService {
     @Autowired
     private SetmealDishService setmealDishService;
+
+    @Autowired
+    SetmealMapper setmealMapper;
 
     /**
      * 新增套餐，同时需要保存套餐和菜品的关联关系
@@ -99,5 +103,77 @@ public class SetmealServiceImpl extends ServiceImpl<SetmealMapper, Setmeal> impl
         }).collect(Collectors.toList());
 
         setmealDishService.saveBatch(setmealDishes);
+    }
+
+    /**
+     * 删除套餐，同时输出套餐和菜品关联的数据
+     *
+     * @param ids
+     */
+    @Override
+    public void removeWithDish(List<Long> ids) {
+        // 先查询套餐状态，确实是否可以删除
+        // select count(*) from setmeal where id in (1, 2, 3) and status = 1;
+        LambdaQueryWrapper<Setmeal> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.in(Setmeal::getId, ids);
+        lambdaQueryWrapper.eq(Setmeal::getStatus, 1);
+
+        int count = this.count(lambdaQueryWrapper);
+        if (count > 0) {
+            // 如果不能删除，抛出一个业务异常
+            throw new CustomException("套餐正在售卖中，不能删除");
+        }
+
+
+        // 如果可以删除，先删除套餐表中的数据-- setmeal
+        this.removeByIds(ids);
+
+        //再删除关系表中的数据-- setmeal_dish
+        // delete from setmeal_dish where id in (1, 2, 3);
+        LambdaQueryWrapper<SetmealDish> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.in(SetmealDish::getSetmealId, ids);
+        setmealDishService.remove(queryWrapper);
+    }
+
+    /**
+     * 批量修改套餐的 停/启 售状态
+     * @param ids
+     * @return
+     */
+    @Override
+    public List<Setmeal> changeSetmealStatus(List<Long> ids) {
+        //改变套餐状态
+        //先去数据库查询前端页面传递过来的List
+        LambdaQueryWrapper<Setmeal> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.in(Setmeal::getId, ids);
+
+        //找到对应的实体集合
+        List<Setmeal> setmealList = setmealMapper.selectList(lambdaQueryWrapper);
+
+        for (Setmeal setmeal : setmealList) {
+            if (setmealMapper.selectById(setmeal.getId()).getStatus()== 1) {
+                setmealMapper.selectById(setmeal.getId()).setStatus(0);
+//                this.updateById(setmeal);
+//                setmeal.setStatus(0);
+            } else {
+                setmealMapper.selectById(setmeal.getId()).setStatus(1);
+                this.updateById(setmeal);
+            }
+        }
+        return setmealList;
+    }
+
+    /**
+     * 修改套餐的 停/启 售状态
+     * @param setmeal
+     */
+    @Override
+    public void setStatus(Setmeal setmeal) {
+        if (setmeal.getStatus() == 1) {
+            setmeal.setStatus(0);
+        } else {
+            setmeal.setStatus(1);
+        }
+        this.updateById(setmeal);
     }
 }

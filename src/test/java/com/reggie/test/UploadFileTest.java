@@ -1,6 +1,8 @@
 package com.reggie.test;
 
+import com.jerry.reggie.service.SetmealService;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * ClassName: UploadFileTest

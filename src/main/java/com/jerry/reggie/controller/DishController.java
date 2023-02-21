@@ -155,12 +155,18 @@ public class DishController {
      * @param ids
      * @return
      */
+//    @DeleteMapping
+//    public R<String> delete(Long[] ids){
+//        for (Long id : ids) {
+//            dishService.delete(id);
+//        }
+//        return R.success("删除菜品成功！");
+//    }
     @DeleteMapping
-    public R<String> delete(Long[] ids){
-        for (Long id : ids) {
-            dishService.delete(id);
-        }
-        return R.success("删除菜品成功！");
+    public R<String> delete(@RequestParam List<Long> ids) {
+        log.info("id: {}", ids);
+        dishService.removeWithFlavor(ids);
+        return R.success("菜品数据删除成功");
     }
 
     /**
