@@ -144,8 +144,10 @@ public class SetmealController {
 //        List<Setmeal> setmeals = setmealService.changeSetmealStatus(ids);
 //        return R.success(setmeals);
 //    }
+
     /**
      * 修改套餐的 停/启 售状态
+     *
      * @param ids
      * @return
      */
@@ -169,4 +171,24 @@ public class SetmealController {
         return R.success("套餐数据删除成功");
     }
 
+    /**
+     * 根据条件查询套餐数据
+     *
+     * @param setmeal
+     * @return
+     */
+    @GetMapping("/list")
+    public R<List<Setmeal>> list(Setmeal setmeal) {
+        //构造查询条件
+        LambdaQueryWrapper<Setmeal> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(setmeal.getCategoryId() != null, Setmeal::getCategoryId, setmeal.getCategoryId());
+        //查询状态为1，启售状态
+        lambdaQueryWrapper.eq(setmeal.getStatus() != null, Setmeal::getStatus, setmeal.getStatus());
+        //添加排序条件
+        lambdaQueryWrapper.orderByDesc(Setmeal::getUpdateTime);
+
+        List<Setmeal> list = setmealService.list(lambdaQueryWrapper);
+
+        return R.success(list);
+    }
 }
