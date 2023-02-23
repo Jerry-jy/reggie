@@ -16,6 +16,18 @@
 
   <dependencies>
 
+    <dependency>
+      <!-- 使用jedis来操作redis 跟项目无关，只是测试 -->
+      <groupId>redis.clients</groupId>
+      <artifactId>jedis</artifactId>
+    </dependency>
+
+    <!--开启redis缓存-->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-data-redis</artifactId>
+    </dependency>
+
     <!--阿里云短信服务-->
     <dependency>
       <groupId>com.aliyun</groupId>
